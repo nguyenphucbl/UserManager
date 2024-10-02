@@ -1,11 +1,23 @@
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import { Link, NavLink, Route, Routes } from "react-router-dom";
+import {
+  createSearchParams,
+  Link,
+  NavLink,
+  Route,
+  Routes,
+} from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import AddUser from "./pages/AddUser";
+import User from "./pages/User";
+import { useSelector } from "react-redux";
 function App() {
+  const {
+    paginate: { _page, _limit },
+  } = useSelector((state) => state.users);
+  const searchParams = createSearchParams({ _page, _limit }).toString();
   return (
     <>
       <div className="container">
@@ -46,6 +58,11 @@ function App() {
                     Login
                   </NavLink>
                 </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to={`/user?${searchParams}`}>
+                    User
+                  </NavLink>
+                </li>
               </ul>
             </div>
           </div>
@@ -53,6 +70,7 @@ function App() {
         <div className="row">
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/user" element={<User />} />
             <Route path="/add-user" element={<AddUser />} />
             <Route path="/login" element={<Login />} />
           </Routes>

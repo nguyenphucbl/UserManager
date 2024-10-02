@@ -9,6 +9,12 @@ const initialState = {
   users: [],
   loading: false,
   error: null,
+  paginate: {
+    _page: 1,
+    _limit: 10,
+    searchTerm: "",
+  },
+  totalCount: 0,
 };
 
 export const userSlice = createSlice({
@@ -23,6 +29,7 @@ export const userSlice = createSlice({
       .addCase(fetchUserById.fulfilled, (state, action) => {
         state.loading = false;
         state.users = action.payload;
+        state.totalCount = action.payload.totalCount;
       })
       .addCase(fetchUserById.rejected, (state, action) => {
         state.loading = false;

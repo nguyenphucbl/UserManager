@@ -1,11 +1,15 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { setUser } from "../slices/addUserSlice";
 const API = import.meta.env.VITE_API;
-const fetchUserById = createAsyncThunk("users/fetchUser", async () => {
-  const res = await fetch(API);
-  const data = await res.json();
-  return data;
-});
+const fetchUserById = createAsyncThunk(
+  "users/fetchUser",
+  async (query = "") => {
+    const res = await fetch(API + query);
+    const totalCount = res.headers.get("X-Total-Count");
+    const data = await res.json();
+    return { data, totalCount };
+  }
+);
 const addUser = createAsyncThunk(
   "users/addUser",
   async (user, { dispatch }) => {
@@ -20,6 +24,7 @@ const addUser = createAsyncThunk(
     if (!res.ok) {
       throw new Error("Failed to add user");
     }
+
     const data = await res.json();
     return data;
   }

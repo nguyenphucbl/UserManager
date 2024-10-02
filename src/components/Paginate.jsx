@@ -1,44 +1,37 @@
 import { useSelector } from "react-redux";
-import {
-  Link,
-  useLocation,
-  useNavigate,
-  useSearchParams,
-} from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 export default function Paginate() {
-  const { users } = useSelector((state) => state.users);
-  const location = useLocation();
-  const navigate = useNavigate();
+  const { users, totalCount, paginate } = useSelector((state) => state.users);
+  const { _page, _limit } = paginate;
+
   const [searchParams, setSearchParams] = useSearchParams();
-  const currentPage = searchParams.get("_page") || 1;
-  const limit = searchParams.get("_limit") || 10;
-  const totalPages = Math.ceil(users.length / limit);
+  const totalPages = Math.ceil(totalCount / _limit);
   const handleChangePage = (newPage) => {
-    setSearchParams({ _page: newPage });
-    navigate(`${location.pathname}?_page=${newPage}&_limit=${limit}`);
+    setSearchParams({
+      ...Object.fromEntries([...searchParams]),
+      _page: newPage,
+    });
   };
   return (
     <nav aria-label="Page navigation">
       <ul className="pagination justify-content-center">
-        <li className={`page-item ${currentPage === 1 ? "disabled" : ""}`}>
+        <li className={`page-item ${_page === 1 ? "disabled" : ""}`}>
           <Link
             className="page-link"
-            to="#"
-            onClick={() => handleChangePage(+currentPage - 1)}
+            onClick={() => handleChangePage(+_page - 1)}
           >
             Previous
           </Link>
         </li>
 
-        {[...Array(totalPages)].map((_, index) => (
+        {Array.from({ length: totalPages }).map((_, index) => (
           <li
             key={index}
-            className={`page-item ${currentPage === index + 1 ? "active" : ""}`}
+            className={`page-item ${_page === index + 1 ? "active" : ""}`}
           >
             <Link
               className="page-link"
-              to="#"
               onClick={() => handleChangePage(index + 1)}
             >
               {index + 1}
@@ -46,15 +39,11 @@ export default function Paginate() {
           </li>
         ))}
 
-        <li
-          className={`page-item ${
-            currentPage === totalPages ? "disabled" : ""
-          }`}
-        >
+        <li className={`page-item ${_page === totalPages ? "disabled" : ""}`}>
           <Link
             className="page-link"
             to="#"
-            onClick={() => handleChangePage(+currentPage + 1)}
+            onClick={() => handleChangePage(+_page + 1)}
           >
             Next
           </Link>
