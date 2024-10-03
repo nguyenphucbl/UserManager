@@ -30,6 +30,10 @@ export const userSlice = createSlice({
         state.loading = false;
         state.users = action.payload;
         state.totalCount = action.payload.totalCount;
+        state.paginate = {
+          ...state.paginate,
+          ...action.payload.searchParams,
+        };
       })
       .addCase(fetchUserById.rejected, (state, action) => {
         state.loading = false;

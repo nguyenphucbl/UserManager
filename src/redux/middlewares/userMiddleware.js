@@ -1,13 +1,15 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { setUser } from "../slices/addUserSlice";
+import { createSearchParams } from "react-router-dom";
 const API = import.meta.env.VITE_API;
 const fetchUserById = createAsyncThunk(
   "users/fetchUser",
-  async (query = "") => {
-    const res = await fetch(API + query);
+  async (searchParams) => {
+    const query = createSearchParams(searchParams).toString();
+    const res = await fetch(`${API}?${query}`);
     const totalCount = res.headers.get("X-Total-Count");
     const data = await res.json();
-    return { data, totalCount };
+    return { data, totalCount, searchParams };
   }
 );
 const addUser = createAsyncThunk(

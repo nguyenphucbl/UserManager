@@ -9,16 +9,15 @@ import { useLocation, useSearchParams } from "react-router-dom";
 export default function User() {
   const { users, loading, paginate } = useSelector((state) => state.users);
   const userList = users.data;
-  console.log("🚀 ~ Home ~ paginate:", paginate);
   const { _page, _limit, searchTerm } = paginate;
   const [selectedUser, setSelectedUser] = useState(null);
   const location = useLocation();
-  console.log("🚀 ~ User ~ location:", location);
+  const [searchParams] = useSearchParams();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchUserById(location.search));
-  }, [dispatch, location.search]);
+    dispatch(fetchUserById(Object.fromEntries(searchParams)));
+  }, [dispatch, searchParams]);
   const handleRemove = async (userId) => {
     const { isConfirmed } = await Swal.fire({
       title: "Are you sure?",
